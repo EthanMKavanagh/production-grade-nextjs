@@ -28,10 +28,6 @@ const Blog = ({ posts }) => {
   )
 }
 
-Blog.defaultProps = {
-  posts: [],
-}
-
 export function getStaticProps() {
   const cmsPosts = postsFromCMS.published.map((post) => {
     const { data } = matter(post)

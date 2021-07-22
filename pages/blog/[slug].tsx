@@ -9,6 +9,8 @@ import HomeNav from '../../components/homeNav'
 import fs from 'fs'
 import path from 'path'
 import matter from 'gray-matter'
+import { posts } from '../../content'
+import renderToString from 'next-mdx-remote/render-to-string'
 
 const BlogPost: FC<Post> = ({ source, frontMatter }) => {
   const content = hydrate(source)
@@ -47,15 +49,33 @@ export function getStaticPaths() {
   const fileNames = fs.readdirSync(postsPath)
 
   const slugs = fileNames.map((name) => {
-    const fullPath = path.join(process.cwd(), name)
-    const file = fs.readFileSync(fullPath, 'utf-8')
+    const filePath = path.join(postsPath, name)
+    const file = fs.readFileSync(filePath, 'utf-8')
     const { data } = matter(file)
     return data
   })
 
-  return { paths: slugs.map((s) => ({ params: { slug: s.slug } })), fallback: false }
+  return { paths: slugs.map((s) => ({ params: { slug: s.slug } })), fallback: true }
 }
 
-export function getStaticProps() {}
+export async function getStaticProps({ params }) {
+  let post
+  try {
+    const filesPath = path.join(process.cwd(), 'posts', `${params.slug}` + '.mdx')
+    post = fs.readFileSync(filesPath, 'utf-8')
+  } catch {
+    const cmsPosts = posts.published.map((p) => {
+      return matter(p)
+    })
+
+    const match = cmsPosts.find((p) => p.data.slug === params.slug)
+    post = match.content
+  }
+
+  const { data } = matter(post)
+  const mdxSource = await renderToString(post, { scope: data })
+
+  return { props: { source: mdxSource, frontMatter: data } }
+}
 
 export default BlogPost
