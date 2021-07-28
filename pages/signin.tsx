@@ -1,9 +1,9 @@
 import React, { useEffect } from 'react'
-import { Pane, majorScale, Text } from 'evergreen-ui'
-import Logo from '../components/logo'
+import { Pane, majorScale, Text, Spinner } from 'evergreen-ui'
 import { signIn, useSession } from 'next-auth/client'
-import SocialButton from '../components/socialButton'
 import { useRouter } from 'next/router'
+import Logo from '../components/logo'
+import SocialButton from '../components/socialButton'
 
 const Signin = () => {
   const [session, loading] = useSession()
@@ -35,6 +35,11 @@ const Signin = () => {
               Sign in.
             </Text>
           </Pane>
+          {loading ? (
+            <Pane>
+              <Spinner />
+            </Pane>
+          ) : null}
         </Pane>
       </Pane>
       <Pane
