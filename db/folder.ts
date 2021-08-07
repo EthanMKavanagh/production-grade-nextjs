@@ -2,7 +2,7 @@ import { Db } from 'mongodb'
 import { nanoid } from 'nanoid'
 
 export const createFolder = async (db: Db, folder: { createdBy: string; name: string }) => {
-  return db
+  const newFolder = await db
     .collection('folders')
     .insertOne({
       _id: nanoid(12),
@@ -10,6 +10,8 @@ export const createFolder = async (db: Db, folder: { createdBy: string; name: st
       createdAt: new Date().toDateString(),
     })
     .then(({ ops }) => ops[0])
+
+  return newFolder
 }
 
 export const getFolders = async (db: Db, userId: string) => {

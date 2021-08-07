@@ -10,7 +10,7 @@ export const getDocsByFolder = async (db: Db, folderId: string) => {
 }
 
 export const createDoc = async (db: Db, doc: { createdBy: string; folder: string; name: string; content?: any }) => {
-  return db
+  const newDoc = await db
     .collection('docs')
     .insertOne({
       _id: nanoid(12),
@@ -18,6 +18,8 @@ export const createDoc = async (db: Db, doc: { createdBy: string; folder: string
       createdAt: new Date().toDateString(),
     })
     .then(({ ops }) => ops[0])
+
+  return newDoc
 }
 
 export const updateOne = async (db: Db, id: string, updates: any) => {

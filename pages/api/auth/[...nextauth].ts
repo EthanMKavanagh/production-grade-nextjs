@@ -26,11 +26,11 @@ export default (req, res) =>
     },
     callbacks: {
       async session(session, user) {
-        session.user.id = user.id
+        session.userId = user.id
         return session
       },
       async jwt(tokenPayload, user, account, profile, isNewUser) {
-        const { db } = await connectToDB()
+        const { db }: any = await connectToDB()
 
         if (isNewUser) {
           const personalFolder = await folder.createFolder(db, { createdBy: `${user.id}`, name: 'Getting Started' })
